@@ -3,14 +3,13 @@ import * as yup from 'yup';
 import { StatusCodes } from 'http-status-codes';
 
 import { validation } from '../../shared/middleware';
+import { ICity } from '../../database/models';
 
 interface IParamProps {
   id?: number;
 }
 
-interface IBodyProps {
-  name: string;
-}
+interface IBodyProps extends Omit<ICity, 'id'> {}
 
 export const updateByIdValidation = validation((getSchema) => ({
   body: getSchema<IBodyProps>(
