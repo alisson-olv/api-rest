@@ -3,6 +3,7 @@ import * as yup from 'yup';
 import { StatusCodes } from 'http-status-codes';
 
 import { validation } from '../../shared/middleware';
+import { CitiesProvider } from '../../database/providers/cities';
 
 interface IParamProps {
   id?: number;
@@ -17,12 +18,38 @@ export const deleteByIdValidation = validation((getSchema) => ({
 }));
 
 export const deleteById = async (req: Request<IParamProps>, res: Response) => {
-  if (Number(req.params.id) === 99999)
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+  if (!req.params.id) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
       errors: {
-        default: 'City do not found.',
+        default: 'You need to inform a "id" to delete the city',
       },
     });
+  }
 
-  return res.status(StatusCodes.NO_CONTENT).send();
+  try {
+    const result = await CitiesProvider.deleteById(req.params.id);
+
+    if (result instanceof Error) {
+      if (result.message === 'City not found') {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          errors: {
+            default: result.message,
+          },
+        });
+      }
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        errors: {
+          default: result.message,
+        },
+      });
+    }
+
+    return res.status(StatusCodes.NO_CONTENT).send();
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      errors: {
+        default: 'Error deleting city',
+      },
+    });
+  }
 };

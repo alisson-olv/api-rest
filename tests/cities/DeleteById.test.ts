@@ -17,7 +17,7 @@ describe('Cities - DeleteById', () => {
   it('Should dont delete a City that dont exists', async () => {
     const res = await testServer.delete('/cities/99999').send();
 
-    expect(res.status).toEqual(StatusCodes.INTERNAL_SERVER_ERROR);
+    expect(res.status).toEqual(StatusCodes.NOT_FOUND);
     expect(res.body).toHaveProperty('errors.default');
   });
 });
