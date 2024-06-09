@@ -3,6 +3,7 @@ import * as yup from 'yup';
 import { StatusCodes } from 'http-status-codes';
 
 import { validation } from '../../shared/middleware';
+import { CitiesProvider } from '../../database/providers/cities';
 
 interface IQueryProps {
   page?: number;
@@ -27,10 +28,7 @@ export const getAll = async (
   res.setHeader('access-control-expose-headers', 'x-total-count');
   res.setHeader('x-total-count', 1);
 
-  return res.status(StatusCodes.OK).json([
-    {
-      id: 1,
-      name: 'São Paulo',
-    },
-  ]);
+  const result = await CitiesProvider.getAll();
+
+  return res.status(StatusCodes.OK).json(result);
 };
