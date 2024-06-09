@@ -15,4 +15,6 @@ if (process.env.IS_LOCALHOST !== 'true') {
       startServer();
     })
     .catch(console.log);
+} else {
+  startServer();
 }
