@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { validation } from '../../shared/middleware';
 import { ICity } from '../../database/models';
+import { CitiesProvider } from '../../database/providers/cities';
 
 interface IParamProps {
   id?: number;
@@ -28,12 +29,22 @@ export const updateById = async (
   req: Request<IParamProps, {}, IBodyProps>,
   res: Response
 ) => {
-  if (Number(req.params.id) === 99999)
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+  if (!req.params.id) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
       errors: {
-        default: 'City do not found',
+        default: 'id need to bem informed',
       },
     });
+  }
 
-  return res.status(StatusCodes.NO_CONTENT).send();
+  const result = await CitiesProvider.updateById(req.params.id, req.body);
+  if (result instanceof Error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      errors: {
+        default: result.message,
+      },
+    });
+  }
+
+  return res.status(StatusCodes.NO_CONTENT).json(result);
 };
