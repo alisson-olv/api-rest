@@ -21,7 +21,7 @@ export const deleteById = async (req: Request<IParamProps>, res: Response) => {
   if (!req.params.id) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       errors: {
-        default: 'You need to inform a "id" to delete the city',
+        default: 'You need to inform a "id" to delete the person',
       },
     });
   }
@@ -30,7 +30,7 @@ export const deleteById = async (req: Request<IParamProps>, res: Response) => {
     const result = await PersonsProvider.deleteById(req.params.id);
 
     if (result instanceof Error) {
-      if (result.message === 'City not found') {
+      if (result.message === 'Person not found') {
         return res.status(StatusCodes.NOT_FOUND).json({
           errors: {
             default: result.message,
@@ -48,7 +48,7 @@ export const deleteById = async (req: Request<IParamProps>, res: Response) => {
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: {
-        default: 'Error deleting city',
+        default: 'Error deleting Persons',
       },
     });
   }
