@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { testServer } from './../jest.setup';
+
 describe('Cities - GetById', () => {
   it('Should find a City by its id', async () => {
     const res = await testServer.post('/cities').send({
