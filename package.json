@@ -6,10 +6,11 @@
     "singleQuote": true
   },
   "scripts": {
+    "build": "npm install && npm install typescript && npm run postinstall",
+    "postinstall": "tsc",
     "test": "jest",
     "start": "ts-node-dev --respawn ./src/index.ts",
     "production": "node ./build/index.js",
-    "postinstall": "tsc",
     "knex:migrate": "knex --knexfile ./src/server/database/knex/Environment.ts migrate:latest",
     "knex:rollback": "knex --knexfile ./src/server/database/knex/Environment.ts migrate:rollback",
     "knex:rollback-all": "knex --knexfile ./src/server/database/knex/Environment.ts migrate:rollback --all",
