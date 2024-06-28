@@ -4,82 +4,108 @@ import { IPerson } from '../../src/server/database/models';
 
 describe('Persons - Create', () => {
   let cityId: undefined | number = undefined;
+  const token = 'Bearer teste.token';
+
   beforeAll(async () => {
-    const res = await testServer.post('/cities').send({
-      name: 'Any City',
-    });
+    const res = await testServer
+      .post('/cities')
+      .set('Authorization', token)
+      .send({
+        name: 'Any City',
+      });
 
     cityId = res.body;
   });
 
   it('Should create a new Person in database', async () => {
-    const res = await testServer.post('/persons').send({
-      cityId,
-      email: 'binho_alisson@hotmail.com',
-      fullName: 'Alisson Souza',
-    });
+    const res = await testServer
+      .post('/persons')
+      .set('Authorization', token)
+      .send({
+        cityId,
+        email: 'binho_alisson@hotmail.com',
+        fullName: 'Alisson Souza',
+      });
 
     expect(res.statusCode).toEqual(StatusCodes.CREATED);
     expect(typeof res.body).toEqual('number');
   });
 
   it('Should create a new Person in database with different email', async () => {
-    const res = await testServer.post('/persons').send({
-      cityId,
-      email: 'binho@hotmail.com',
-      fullName: 'Alisson Souza',
-    });
+    const res = await testServer
+      .post('/persons')
+      .set('Authorization', token)
+      .send({
+        cityId,
+        email: 'binho@hotmail.com',
+        fullName: 'Alisson Souza',
+      });
 
     expect(res.statusCode).toEqual(StatusCodes.CREATED);
     expect(typeof res.body).toEqual('number');
   });
 
   it('Should not create a Person with a duplicated email', async () => {
-    const res = await testServer.post('/persons').send({
-      cityId,
-      email: 'binho@hotmail.com',
-      fullName: 'Alisson Souza',
-    });
+    const res = await testServer
+      .post('/persons')
+      .set('Authorization', token)
+      .send({
+        cityId,
+        email: 'binho@hotmail.com',
+        fullName: 'Alisson Souza',
+      });
 
     expect(res.status).toEqual(StatusCodes.INTERNAL_SERVER_ERROR);
     expect(res.body).toHaveProperty('errors.default');
   });
 
   it('Should not allow creating a Person without email and cityId', async () => {
-    const res = await testServer.post('/persons').send({
-      fullName: 'Alisson',
-    });
+    const res = await testServer
+      .post('/persons')
+      .set('Authorization', token)
+      .send({
+        fullName: 'Alisson',
+      });
 
     expect(res.statusCode).toEqual(StatusCodes.BAD_REQUEST);
     expect(res.body).toHaveProperty('errors.body');
   });
 
   it('Should not allow creating a fullname Person with less than 3 characters', async () => {
-    const res = await testServer.post('/persons').send({
-      cityId,
-      fullName: 'Ab',
-      email: 'binho_alisson@hotmail.com',
-    });
+    const res = await testServer
+      .post('/persons')
+      .set('Authorization', token)
+      .send({
+        cityId,
+        fullName: 'Ab',
+        email: 'binho_alisson@hotmail.com',
+      });
 
     expect(res.statusCode).toEqual(StatusCodes.BAD_REQUEST);
     expect(res.body).toHaveProperty('errors.body.fullName');
   });
 
   it('Should not allow creating a Person without email', async () => {
-    const res = await testServer.post('/persons').send({
-      cityId,
-      fullName: 'Alisson Souza',
-    });
+    const res = await testServer
+      .post('/persons')
+      .set('Authorization', token)
+      .send({
+        cityId,
+        fullName: 'Alisson Souza',
+      });
 
     expect(res.statusCode).toEqual(StatusCodes.BAD_REQUEST);
     expect(res.body).toHaveProperty('errors.body.email');
   });
 
   it('Should not allow creating a Person without cityId', async () => {
-    const res = await testServer.post('/persons').send({
-      fullName: 'Alisson Souza',
-      email: 'chiquin@hotmail.com',
-    });
+    const res = await testServer
+      .post('/persons')
+      .set('Authorization', token)
+      .send({
+        fullName: 'Alisson Souza',
+        email: 'chiquin@hotmail.com',
+      });
 
     expect(res.statusCode).toEqual(StatusCodes.BAD_REQUEST);
     expect(res.body).toHaveProperty('errors.body.cityId');
@@ -93,7 +119,10 @@ describe('Persons - Create', () => {
       fullName: 'Chico Bento',
     };
 
-    const res = await testServer.post('/persons').send(person);
+    const res = await testServer
+      .post('/persons')
+      .set('Authorization', token)
+      .send(person);
 
     expect(res.statusCode).toEqual(StatusCodes.BAD_REQUEST);
     expect(res.body).toHaveProperty('errors.body.email');
