@@ -6,7 +6,6 @@
     "singleQuote": true
   },
   "scripts": {
-    "build": "npm install && npm install typescript && npm run postinstall",
     "postinstall": "tsc",
     "test": "jest",
     "start": "ts-node-dev --respawn ./src/index.ts",
