@@ -6,7 +6,7 @@
     "singleQuote": true
   },
   "scripts": {
-    "postinstall": "tsc",
+    "build": "tsc",
     "test": "jest",
     "start": "ts-node-dev --respawn ./src/index.ts",
     "production": "node ./build/index.js",
