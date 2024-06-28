@@ -1,14 +1,29 @@
 import { StatusCodes } from 'http-status-codes';
 import { testServer } from '../jest.setup';
+import { IUser } from '../../src/server/database/models';
 
 describe('Persons - GetById', () => {
-  let cityId: number | undefined = undefined;
-  const token = 'Bearer teste.token';
+  let cityId: undefined | number = undefined;
+  let token: string = '';
+  const endPointSignInUser = '/users/signin';
+  const endPointSignUpUser = '/users/signup';
+  const user: Omit<IUser, 'id'> = {
+    email: 'chicopersongetbyid@hotmail.com',
+    name: 'Chico',
+    password: '1234567',
+  };
 
   beforeAll(async () => {
+    // create user
+    await testServer.post(endPointSignUpUser).send(user);
+
+    const signInUser = await testServer.post(endPointSignInUser).send(user);
+
+    token = signInUser.body.acessToken;
+
     const res = await testServer
       .post('/cities')
-      .set('Authorization', token)
+      .set({ authorization: `Bearer ${token}` })
       .send({
         name: 'Any City',
       });
@@ -19,7 +34,7 @@ describe('Persons - GetById', () => {
   it('Should find a Person by its id', async () => {
     const res = await testServer
       .post('/persons')
-      .set('Authorization', token)
+      .set({ authorization: `Bearer ${token}` })
       .send({
         cityId,
         email: 'binho_alisson@hotmail.com',
@@ -30,7 +45,7 @@ describe('Persons - GetById', () => {
 
     const resSearched = await testServer
       .get(`/persons/${res.body}`)
-      .set('Authorization', token)
+      .set({ authorization: `Bearer ${token}` })
       .send();
 
     expect(resSearched.status).toEqual(StatusCodes.OK);
@@ -42,7 +57,7 @@ describe('Persons - GetById', () => {
   it('Should not find a Person that does not exist', async () => {
     const res = await testServer
       .get('/persons/99999')
-      .set('Authorization', token)
+      .set({ authorization: `Bearer ${token}` })
       .send();
 
     expect(res.status).toEqual(StatusCodes.INTERNAL_SERVER_ERROR);

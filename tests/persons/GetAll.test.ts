@@ -1,14 +1,29 @@
 import { StatusCodes } from 'http-status-codes';
 import { testServer } from '../jest.setup';
+import { IUser } from '../../src/server/database/models';
 
 describe('Persons - GetAll', () => {
-  let cityId: number | undefined = undefined;
-  const token = 'Bearer teste.token';
+  let cityId: undefined | number = undefined;
+  let token: string = '';
+  const endPointSignInUser = '/users/signin';
+  const endPointSignUpUser = '/users/signup';
+  const user: Omit<IUser, 'id'> = {
+    email: 'chicogetall@hotmail.com',
+    name: 'Chico',
+    password: '1234567',
+  };
 
   beforeAll(async () => {
+    // create user
+    await testServer.post(endPointSignUpUser).send(user);
+
+    const signInUser = await testServer.post(endPointSignInUser).send(user);
+
+    token = signInUser.body.acessToken;
+
     const resCity = await testServer
       .post('/cities')
-      .set('Authorization', token)
+      .set({ authorization: `Bearer ${token}` })
       .send({
         name: 'Any City Name',
       });
@@ -19,7 +34,7 @@ describe('Persons - GetAll', () => {
   it('Should get all Persons', async () => {
     const res = await testServer
       .post('/persons')
-      .set('Authorization', token)
+      .set({ authorization: `Bearer ${token}` })
       .send({
         cityId,
         email: 'binho_getAll@hotmail.com',
@@ -30,7 +45,7 @@ describe('Persons - GetAll', () => {
 
     const resSearched = await testServer
       .get('/persons')
-      .set('Authorization', token)
+      .set({ authorization: `Bearer ${token}` })
       .send();
 
     expect(Number(resSearched.header['x-total-count'])).toBeGreaterThan(0);
