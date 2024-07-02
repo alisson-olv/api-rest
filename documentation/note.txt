@@ -1,0 +1,3 @@
+npx insomnia-documenter --config Insomnia_2024-07-01.json
+npx insomnia-documenter --config Insomnia_2024-07-01.json --output insomnia-documenter-demo
+npx serve
