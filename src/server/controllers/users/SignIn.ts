@@ -60,6 +60,10 @@ export const signIn = async (
 
     return res.status(StatusCodes.OK).json({
       acessToken: acessToken,
+      user: {
+        name: user.name,
+        email: user.email,
+      },
     });
   }
 };
